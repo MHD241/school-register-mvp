@@ -1,25 +1,28 @@
 # School Register MVP
 
-Connected to the dedicated Supabase project:
-`https://qfqrehdsdrvzxqrottdb.supabase.co`
+Fast prototype for a cleaner Scottish school registration workflow.
 
-## Setup
+## Demo rules
 
-1. Upload this folder to a NEW GitHub repository.
-2. Copy `.env.example` to `.env`.
-3. Run `npm install`.
-4. Run `npm run dev`.
+- Fake pupil names only.
+- No real school data.
+- No real medical, attendance, address, parent, or safeguarding data.
+- The public demo saves a submitted register locally in the browser.
 
-The publishable Supabase key in `.env.example` is designed for frontend use. Never add a service-role/secret key to this project.
+## GitHub Pages
 
-## Current status
+This repo includes a GitHub Actions workflow that builds the Vite app and deploys `dist/` to GitHub Pages.
 
-- Dedicated Supabase project created in London.
-- Secured schema created: schools, profiles, classes, pupils, class_members, register_sessions, attendance.
-- Row Level Security enabled on every table.
-- School-scoped policies added.
-- Supabase security advisor: no current security lints.
-- Frontend has teacher magic-link sign-in.
-- Demo uses fake pupil names only.
+After uploading the files:
 
-Next step: create a demo teacher/profile and fake school dataset, then write attendance end-to-end.
+1. Open **Settings → Pages**.
+2. Under **Build and deployment**, choose **GitHub Actions**.
+3. Open the **Actions** tab and wait for **Deploy to GitHub Pages** to finish.
+4. Your demo should appear at:
+   `https://mhd241.github.io/school-register-mvp/`
+
+## Backend
+
+A dedicated Supabase project has already been created. The frontend contains only the project's publishable browser key. Never commit a Supabase service-role or secret key.
+
+Next milestone: teacher authentication, demo-school data, real class loading, and secured end-to-end attendance writes.

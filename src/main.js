@@ -7,66 +7,150 @@ const fakePupils = [
   'Noah MacDonald','Hannah Malik','Jack Morrison','Layla Hussain','Oliver Reid'
 ].map((name, i) => ({ id:`demo-${i+1}`, name, status:null }))
 
-let state = structuredClone(fakePupils)
+let pupils = structuredClone(fakePupils)
+
+function statusCount(status) {
+  return pupils.filter(p => p.status === status).length
+}
+
+function markedCount() {
+  return pupils.filter(p => p.status).length
+}
 
 function render() {
-  const marked = state.filter(p=>p.status).length
-  const absent = state.filter(p=>p.status==='absent').length
-  const late = state.filter(p=>p.status==='late').length
+  const marked = markedCount()
+
   document.querySelector('#app').innerHTML = `
-  <header class="topbar">
-    <div><div class="brand">Register</div><div class="muted">School attendance MVP</div></div>
-    <div class="topright"><span class="badge">DEMO DATA</span><button id="loginBtn" class="ghost">Teacher login</button></div>
-  </header>
-  <main class="wrap">
-    <section class="hero">
-      <div><div class="eyebrow">CURRENT CLASS</div><h1>S3 Mathematics</h1><p>Room B14 · 15 pupils</p></div>
-      <button id="allPresent" class="primary">Mark all present</button>
-    </section>
-    <section class="stats">
-      <div><strong>${marked}/15</strong><span>Marked</span></div>
-      <div><strong>${absent}</strong><span>Absent</span></div>
-      <div><strong>${late}</strong><span>Late</span></div>
-    </section>
-    <section class="card">
-      ${state.map((p,idx)=>`
-      <div class="pupil">
-        <div class="name">${p.name}</div>
-        <div class="choices">
-          ${['present','absent','late'].map(s=>`<button data-index="${idx}" data-status="${s}" class="choice ${p.status===s?'active':''} ${s}">${s[0].toUpperCase()+s.slice(1)}</button>`).join('')}
+    <header class="topbar">
+      <div class="brandwrap">
+        <div class="brandmark">R</div>
+        <div>
+          <div class="brand">Register</div>
+          <div class="subtitle">Education attendance prototype</div>
         </div>
-      </div>`).join('')}
-    </section>
-    <section class="submitrow">
-      <div class="muted">${marked===state.length?'Register ready to submit.':`${state.length-marked} pupils still need a status.`}</div>
-      <button id="submit" class="submit" ${marked!==state.length?'disabled':''}>Submit register</button>
-    </section>
-    <div id="message"></div>
-  </main>`
+      </div>
 
-  document.querySelector('#allPresent').onclick=()=>{state=state.map(p=>({...p,status:'present'}));render()}
-  document.querySelectorAll('.choice').forEach(btn=>btn.onclick=()=>{state[Number(btn.dataset.index)].status=btn.dataset.status;render()})
-  document.querySelector('#submit').onclick=submitRegister
-  document.querySelector('#loginBtn').onclick=teacherLogin
-}
+      <div class="headerRight">
+        <span class="demoBadge">DEMO · NO REAL PUPIL DATA</span>
+      </div>
+    </header>
 
-async function teacherLogin(){
-  const email = prompt('Teacher demo email:')
-  if(!email) return
-  const { error } = await supabase.auth.signInWithOtp({ email, options:{ shouldCreateUser:true }})
-  const message = document.querySelector('#message')
-  message.innerHTML = error
-    ? `<div class="error">${error.message}</div>`
-    : `<div class="success">Magic sign-in link sent to ${email}. Check your inbox.</div>`
-}
+    <main class="page">
+      <section class="welcome">
+        <div>
+          <div class="eyebrow">THURSDAY · PERIOD 1</div>
+          <h1>S3 Mathematics</h1>
+          <p>Room B14 · 15 pupils · Demo teacher</p>
+        </div>
+        <button id="markAll" class="primary">✓ Mark all present</button>
+      </section>
 
-async function submitRegister(){
-  const message=document.querySelector('#message')
-  const { data:{ user } } = await supabase.auth.getUser()
-  if(!user){
-    message.innerHTML='<div class="error">Sign in as a teacher first. The live database only accepts authenticated users.</div>'
-    return
+      <section class="stats">
+        <article>
+          <span>Completed</span>
+          <strong>${marked}<small>/15</small></strong>
+        </article>
+        <article>
+          <span>Present</span>
+          <strong>${statusCount('present')}</strong>
+        </article>
+        <article>
+          <span>Absent</span>
+          <strong>${statusCount('absent')}</strong>
+        </article>
+        <article>
+          <span>Late</span>
+          <strong>${statusCount('late')}</strong>
+        </article>
+      </section>
+
+      <section class="registerCard">
+        <div class="cardHeader">
+          <div>
+            <h2>Class register</h2>
+            <p>Mark exceptions, then submit.</p>
+          </div>
+          <span>${markedCount() === pupils.length ? 'Ready' : `${pupils.length - markedCount()} remaining`}</span>
+        </div>
+
+        <div class="pupils">
+          ${pupils.map((p, i) => `
+            <div class="pupil">
+              <div class="pupilIdentity">
+                <div class="avatar">${p.name.split(' ').map(x=>x[0]).join('').slice(0,2)}</div>
+                <div>
+                  <strong>${p.name}</strong>
+                  <span>Demo pupil ${String(i+1).padStart(2,'0')}</span>
+                </div>
+              </div>
+
+              <div class="choices">
+                ${['present','absent','late'].map(status => `
+                  <button
+                    class="choice ${status} ${p.status === status ? 'active' : ''}"
+                    data-index="${i}"
+                    data-status="${status}"
+                  >
+                    ${status === 'present' ? '✓' : status === 'absent' ? '×' : '⏱'}
+                    ${status[0].toUpperCase()+status.slice(1)}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </section>
+
+      <section class="footerAction">
+        <div>
+          <strong>${marked === pupils.length ? 'Register complete' : 'Register incomplete'}</strong>
+          <span>${marked === pupils.length ? 'All pupils have a status.' : `${pupils.length-marked} pupil${pupils.length-marked === 1 ? '' : 's'} still need marking.`}</span>
+        </div>
+
+        <button id="submitRegister" class="submitButton" ${marked !== pupils.length ? 'disabled' : ''}>
+          Submit register
+        </button>
+      </section>
+
+      <div id="toast"></div>
+    </main>
+  `
+
+  document.querySelector('#markAll').onclick = () => {
+    pupils = pupils.map(p => ({...p, status:'present'}))
+    render()
   }
-  message.innerHTML='<div class="success">Frontend is connected. Next build step: seed a demo school/class/pupils linked to this teacher account, then submit records directly into the secured schema.</div>'
+
+  document.querySelectorAll('.choice').forEach(button => {
+    button.onclick = () => {
+      pupils[Number(button.dataset.index)].status = button.dataset.status
+      render()
+    }
+  })
+
+  document.querySelector('#submitRegister').onclick = submitDemo
 }
+
+async function submitDemo() {
+  const payload = {
+    submitted_at: new Date().toISOString(),
+    class_name: 'S3 Mathematics',
+    attendance: pupils
+  }
+
+  localStorage.setItem('school-register-demo', JSON.stringify(payload))
+
+  const toast = document.querySelector('#toast')
+  toast.innerHTML = `
+    <div class="toast success">
+      <strong>Register submitted</strong>
+      <span>Demo saved safely in this browser. Backend integration is ready for the next build step.</span>
+    </div>
+  `
+
+  setTimeout(() => {
+    if (document.querySelector('#toast')) document.querySelector('#toast').innerHTML = ''
+  }, 4500)
+}
+
 render()
