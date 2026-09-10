@@ -1,20 +1,25 @@
 # School Register MVP
 
-Fast demo of a modern school registration workflow.
+Connected to the dedicated Supabase project:
+`https://qfqrehdsdrvzxqrottdb.supabase.co`
 
-## Run locally
-1. Install Node.js.
-2. Run `npm install`
-3. Copy `.env.example` to `.env`
-4. Add the URL and publishable key from a NEW Supabase project.
-5. Run `npm run dev`
+## Setup
 
-Without Supabase values, the demo still works and saves a submitted register locally in the browser.
+1. Upload this folder to a NEW GitHub repository.
+2. Copy `.env.example` to `.env`.
+3. Run `npm install`.
+4. Run `npm run dev`.
 
-## Backend
-Run `supabase/schema.sql` in the SQL editor of the NEW Supabase project only.
+The publishable Supabase key in `.env.example` is designed for frontend use. Never add a service-role/secret key to this project.
 
-Important: this repository contains fake demo pupils only. Do not use real school/pupil data in this MVP.
+## Current status
 
-## GitHub
-Upload the contents of this folder to a new repository. Do not commit `.env`.
+- Dedicated Supabase project created in London.
+- Secured schema created: schools, profiles, classes, pupils, class_members, register_sessions, attendance.
+- Row Level Security enabled on every table.
+- School-scoped policies added.
+- Supabase security advisor: no current security lints.
+- Frontend has teacher magic-link sign-in.
+- Demo uses fake pupil names only.
+
+Next step: create a demo teacher/profile and fake school dataset, then write attendance end-to-end.
