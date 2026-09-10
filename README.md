@@ -1,16 +1,27 @@
-# School Register MVP v2
+# School Register MVP — GitHub Pages static version
 
-Milestone 2:
-- Supabase teacher auth
-- One-click demo workspace creation
-- Class and pupils loaded from Supabase
-- Real register session creation
-- Real attendance writes to Supabase
-- Fake pupil data only
+This version has NO build step.
 
-## Important one-time Supabase setting
-For magic-link sign-in, add this URL to Supabase Auth > URL Configuration > Redirect URLs:
+Upload these files directly to the root of:
+MHD241/school-register-mvp
 
+Files:
+- index.html
+- app.js
+- style.css
+
+Then go to:
+Settings → Pages
+
+Set:
+- Source: Deploy from a branch
+- Branch: main
+- Folder: /(root)
+
+The live site should be:
 https://mhd241.github.io/school-register-mvp/
 
-Then upload these files to the GitHub repo, replacing the old files.
+Supabase Auth redirect URL must include:
+https://mhd241.github.io/school-register-mvp/
+
+This prototype uses fake pupil data only.
